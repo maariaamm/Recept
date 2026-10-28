@@ -41,7 +41,26 @@ function validateSearch(searchPhrase) {
   clearError();
   return true;
 }
+/**
+ * Hämtar recept från DummyJSON baserat på en sökfras.
+ * @param {string} searchPhrase
+ * @returns {Promise<Array>} Array med recept
+ */
+async function fetchRecipes(searchPhrase) {
+  // Bygg URL:en och koda sökfrasen så att den fungerar i en adress
+  const url =
+    "https://dummyjson.com/recipes/search?q=" +
+    encodeURIComponent(searchPhrase);
 
+  // Gör anropet och vänta på svaret
+  const response = await fetch(url);
+
+  // Omvandla svaret från JSON till ett JavaScript-objekt
+  const data = await response.json();
+
+  // Receptlistan ligger i data.recipes
+  return data.recipes;
+}
 /**
  * Hanterar när sökformuläret skickas.
  * @param {Event} event
@@ -57,7 +76,9 @@ async function handleSearch(event) {
     return;
   }
 
-  console.log("Giltig sökfras:", searchPhrase);
+  // Hämta recept från API
+  const recipes = await fetchRecipes(searchPhrase);
+  console.log(recipes);
 }
 
 // Eventlisteners
