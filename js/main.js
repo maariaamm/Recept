@@ -88,6 +88,56 @@ function clearRecipe() {
   recipeSection.innerHTML = "";
 }
 
+/**
+ * Skapar ett p-element med fet etikett och värde, t.ex. "Servings: 4".
+ * @param {string} label
+ * @param {string|number} value
+ * @returns {HTMLParagraphElement}
+ */
+function createInfoParagraph(label, value) {
+  const paragraph = document.createElement("p");
+
+  // Etiketten skrivs med strong
+  const strong = document.createElement("strong");
+  strong.textContent = label + ":";
+
+  // Lägg ihop etikett och värde
+  paragraph.append(strong, " " + value);
+  return paragraph;
+}
+
+/**
+ * Skapar och visar ett recept i DOM.
+ * @param {Object} recipe
+ */
+function displayRecipe(recipe) {
+  // Huvudelementet för receptet
+  const article = document.createElement("article");
+
+  // Receptets namn
+  const title = document.createElement("h3");
+  title.textContent = recipe.name;
+
+  // Receptets bild
+  const image = document.createElement("img");
+  image.src = recipe.image;
+  image.alt = recipe.name;
+
+  // Ruta med information om receptet
+  const infoDiv = document.createElement("div");
+  infoDiv.className = "recipe-info";
+  infoDiv.append(
+    createInfoParagraph("Servings", recipe.servings),
+    createInfoParagraph("Prep time", recipe.prepTimeMinutes + " minutes"),
+    createInfoParagraph("Cooking time", recipe.cookTimeMinutes + " minutes"),
+    createInfoParagraph("Difficulty", recipe.difficulty),
+  );
+
+  // Lägg ihop delarna och lägg till i DOM
+  article.append(title, image, infoDiv);
+  recipeSection.appendChild(article);
+}
+
 async function handleSearch(event) {
   // Stoppa webbläsarens standardbeteende (omladdning av sidan)
   event.preventDefault();
@@ -115,8 +165,8 @@ async function handleSearch(event) {
     return;
   }
 
-  // Test: skriv ut det första receptet i konsolen
-  console.log(recipes[0]);
+  // Visa det första receptet i sökresultatet
+  displayRecipe(recipes[0]);
 }
 
 // Eventlisteners
