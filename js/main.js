@@ -107,6 +107,25 @@ function createInfoParagraph(label, value) {
 }
 
 /**
+ * Skapar en lista (ul eller ol) utifrån en array med texter.
+ * @param {string[]} items
+ * @param {boolean} ordered true ger numrerad lista (ol), false ger punktlista (ul)
+ * @returns {HTMLUListElement|HTMLOListElement}
+ */
+function createList(items, ordered) {
+  const list = document.createElement(ordered ? "ol" : "ul");
+
+  // Skapa ett li-element för varje text i arrayen
+  for (const item of items) {
+    const listItem = document.createElement("li");
+    listItem.textContent = item;
+    list.appendChild(listItem);
+  }
+
+  return list;
+}
+
+/**
  * Skapar och visar ett recept i DOM.
  * @param {Object} recipe
  */
@@ -133,8 +152,26 @@ function displayRecipe(recipe) {
     createInfoParagraph("Difficulty", recipe.difficulty),
   );
 
+  // Rubrik och punktlista för ingredienser
+  const ingredientsHeading = document.createElement("h4");
+  ingredientsHeading.textContent = "Ingredients";
+  const ingredientsList = createList(recipe.ingredients, false);
+
+  // Rubrik och numrerad lista för instruktioner
+  const instructionsHeading = document.createElement("h4");
+  instructionsHeading.textContent = "Instructions";
+  const instructionsList = createList(recipe.instructions, true);
+
   // Lägg ihop delarna och lägg till i DOM
-  article.append(title, image, infoDiv);
+  article.append(
+    title,
+    image,
+    infoDiv,
+    ingredientsHeading,
+    ingredientsList,
+    instructionsHeading,
+    instructionsList,
+  );
   recipeSection.appendChild(article);
 }
 
