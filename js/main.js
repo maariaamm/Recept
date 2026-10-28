@@ -65,20 +65,58 @@ async function fetchRecipes(searchPhrase) {
  * Hanterar när sökformuläret skickas.
  * @param {Event} event
  */
+
+/**
+ * Visar ett meddelande för användaren i message-sektionen.
+ * @param {string} text
+ */
+function showMessage(text) {
+  messageSection.textContent = text;
+}
+
+/**
+ * Tar bort meddelandet från message-sektionen.
+ */
+function clearMessage() {
+  messageSection.textContent = "";
+}
+
+/**
+ * Tar bort det recept som visas just nu.
+ */
+function clearRecipe() {
+  recipeSection.innerHTML = "";
+}
+
 async function handleSearch(event) {
   // Stoppa webbläsarens standardbeteende (omladdning av sidan)
   event.preventDefault();
 
   // Läs sökfrasen och ta bort mellanslag i början och slutet
   const searchPhrase = searchInput.value.trim();
+
   // Avbryt om sökfrasen inte är giltig
   if (!validateSearch(searchPhrase)) {
     return;
   }
 
-  // Hämta recept från API
+  // Ta bort tidigare meddelande innan ny sökning
+  clearMessage();
+
+  // Hämta recept från API:t
   const recipes = await fetchRecipes(searchPhrase);
-  console.log(recipes);
+
+  // Ta bort tidigare recept
+  clearRecipe();
+
+  // Om inga recept hittades, visa ett meddelande och avbryt
+  if (recipes.length === 0) {
+    showMessage("Inget recept kunde hittas. Prova en annan sökfras.");
+    return;
+  }
+
+  // Test: skriv ut det första receptet i konsolen
+  console.log(recipes[0]);
 }
 
 // Eventlisteners
