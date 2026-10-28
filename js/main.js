@@ -11,6 +11,38 @@ const messageSection = document.querySelector("#message");
 const recipeSection = document.querySelector("#recipe");
 
 /**
+ * Visar ett felmeddelande för sökformuläret.
+ * @param {string} text
+ */
+function showError(text) {
+  errorParagraph.textContent = text;
+}
+
+/**
+ * Tar bort eventuellt felmeddelande från sökformuläret.
+ */
+function clearError() {
+  errorParagraph.textContent = "";
+}
+
+/**
+ * Kontrollerar att en sökfras har angetts.
+ * @param {string} searchPhrase
+ * @returns {boolean} true om sökfrasen är giltig
+ */
+function validateSearch(searchPhrase) {
+  // Tomt fält ger felmeddelande och ingen sökning
+  if (searchPhrase === "") {
+    showError("Du måste ange en sökfras.");
+    return false;
+  }
+
+  // Giltig sökfras: ta bort eventuellt tidigare felmeddelande
+  clearError();
+  return true;
+}
+
+/**
  * Hanterar när sökformuläret skickas.
  * @param {Event} event
  */
@@ -20,8 +52,14 @@ async function handleSearch(event) {
 
   // Läs sökfrasen och ta bort mellanslag i början och slutet
   const searchPhrase = searchInput.value.trim();
-  console.log("Sökfras:", searchPhrase);
+  // Avbryt om sökfrasen inte är giltig
+  if (!validateSearch(searchPhrase)) {
+    return;
+  }
+
+  console.log("Giltig sökfras:", searchPhrase);
 }
 
+// Eventlisteners
 // När formuläret skickas
 searchForm.addEventListener("submit", handleSearch);
