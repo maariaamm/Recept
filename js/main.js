@@ -55,6 +55,10 @@ async function fetchRecipes(searchPhrase) {
   // Gör anropet och vänta på svaret
   const response = await fetch(url);
 
+  // Kontrollera att svaret från servern är giltigt
+  if (!response.ok) {
+    throw new Error("Servern svarade med status " + response.status);
+  }
   // Omvandla svaret från JSON till ett JavaScript-objekt
   const data = await response.json();
 
@@ -190,20 +194,31 @@ async function handleSearch(event) {
   // Ta bort tidigare meddelande innan ny sökning
   clearMessage();
 
-  // Hämta recept från API:t
-  const recipes = await fetchRecipes(searchPhrase);
+  try {
+    // Hämta recept från API:t
+    const recipes = await fetchRecipes(searchPhrase);
 
-  // Ta bort tidigare recept
-  clearRecipe();
+    // Ta bort tidigare recept
+    clearRecipe();
 
-  // Om inga recept hittades, visa ett meddelande och avbryt
-  if (recipes.length === 0) {
-    showMessage("Inget recept kunde hittas. Prova en annan sökfras.");
-    return;
+    // Om inga recept hittades, visa ett meddelande och avbryt
+    if (recipes.length === 0) {
+      showMessage("Inget recept kunde hittas. Prova en annan sökfras.");
+      return;
+    }
+
+    // Visa det första receptet i sökresultatet
+    displayRecipe(recipes[0]);
+  } catch (error) {
+    // Teknisk information till konsolen för felsökning
+    console.error("Fel vid hämtning av recept:", error);
+
+    // Ta bort tidigare recept och visa ett tydligt meddelande
+    clearRecipe();
+    showMessage(
+      "Något gick fel när receptet skulle hämtas. Försök igen senare.",
+    );
   }
-
-  // Visa det första receptet i sökresultatet
-  displayRecipe(recipes[0]);
 }
 
 // Eventlisteners
